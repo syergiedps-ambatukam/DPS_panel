@@ -552,9 +552,21 @@ void loop() {
   }
   if (propeller1 != propeller1_prev){
     node.writeSingleRegister(22, (100 - propeller1));
+    if (propeller1 == 0){
+    node.writeSingleCoil(5, 0);
+  } else {
+    node.writeSingleCoil(5, 1);
+  }
   }
   if (propeller2 != propeller2_prev){
   node.writeSingleRegister(23, (100 - propeller2));
+  
+  if (propeller2 == 0){
+    node.writeSingleCoil(6, 0);
+  } else {
+    node.writeSingleCoil(6, 1);
+  }
+
   }
   lcd.setCursor(0,3);
   lcd.print("SSR :");
@@ -562,17 +574,8 @@ void loop() {
   
   lcd.setCursor(8,3);
   lcd.print("|");
-  if (propeller1 == 0){
-    node.writeSingleCoil(5, 0);
-  } else {
-    node.writeSingleCoil(5, 1);
-  }
+  
 
-  if (propeller2 == 0){
-    node.writeSingleCoil(6, 0);
-  } else {
-    node.writeSingleCoil(6, 1);
-  }
   /*
   Serial.print(" |s : ");
   Serial.print(steering1);
