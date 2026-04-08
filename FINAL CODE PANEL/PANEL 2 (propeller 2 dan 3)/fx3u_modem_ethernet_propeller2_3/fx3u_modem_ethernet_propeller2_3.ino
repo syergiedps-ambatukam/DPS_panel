@@ -103,6 +103,8 @@ int steering2_sensor_calibrated;
 int steering1_offset;
 int steering2_offset;
 
+int propeller1_prev;
+int propeller2_prev;
 
 
 // ===== Event handler Ethernet =====
@@ -212,6 +214,7 @@ void loadConfig() {
 
   zone1_prev = zone1;
   zone2_prev = zone2;
+ 
 }
 
 
@@ -414,7 +417,7 @@ void loop() {
   client.loop();
   
   unsigned long now = millis();
-  if (now - lastMsg > 1000) {  
+  if (now - lastMsg > 500) {  
     lastMsg = now;
     lcd.setCursor(0,1);
     lcd.print("PC : V ");
@@ -555,8 +558,25 @@ void loop() {
     node.writeSingleCoil(0, 0);
   }
 
-  node.writeSingleRegister(22, (100 - propeller1));
+  if (propeller1 != propeller1_prev){
+    node.writeSingleRegister(22, (100 - propeller1));
+    if (propeller1 == 0){
+    node.writeSingleCoil(5, 0);
+  } else {
+    node.writeSingleCoil(5, 1);
+  }
+  }
+  if (propeller2 != propeller2_prev){
   node.writeSingleRegister(23, (100 - propeller2));
+  
+  if (propeller2 == 0){
+    node.writeSingleCoil(6, 0);
+  } else {
+    node.writeSingleCoil(6, 1);
+  }
+
+  }
+
 
   lcd.setCursor(0,3);
   lcd.print("SSR :");
@@ -566,17 +586,6 @@ void loop() {
   lcd.print("|");
 
 
-  if (propeller1 == 0){
-    node.writeSingleCoil(5, 0);
-  } else {
-    node.writeSingleCoil(5, 1);
-  }
-
-  if (propeller2 == 0){
-    node.writeSingleCoil(6, 0);
-  } else {
-    node.writeSingleCoil(6, 1);
-  }
   /*
   Serial.print(" |s : ");
   Serial.print(steering1);
@@ -632,6 +641,9 @@ void loop() {
 
   zone1_prev = zone1;
   zone2_prev = zone2;
+
+  propeller1_prev = propeller1;
+  propeller2_prev = propeller2;
 
   }
 
